@@ -1,0 +1,27 @@
+{
+    "name": "it-novum/oopenITCOCKPIT-configuration-import",
+    "description": " A tool to import a Nagios or Naemon Core configuration to openITCOCKPIT ",
+    "version": "1.0.0",
+    "homepage": "http://openitcockpit.io",
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "it-novum GmbH",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "itnovum\\openITCOCKPIT\\": "src/itnovum/openITCOCKPIT/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=5.5.9",
+        "symfony/yaml": "2.8",
+        "guzzlehttp/guzzle": "^6.3",
+        "guiguiboy/php-cli-progress-bar": "^0.0.4",
+        "ext-mbstring": "*"
+    }
+}

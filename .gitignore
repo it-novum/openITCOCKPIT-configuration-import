@@ -1,0 +1,9 @@
+phpunit.phar
+.idea/tasks.xml
+.idea/workspace.xml
+nbproject
+vendor
+composer.lock
+.idea/
+
+

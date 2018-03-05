@@ -1,0 +1,38 @@
+# Set the same value, as you use in your nagios.cfg or naemon.cfg.
+# The default value is 60
+interval_length: 60
+
+# Path where the Importer will search for the resource.cfg
+# This file is required to import $USERx$ macros
+resource_cfg: resource.cfg
+
+
+# 1 is the default config type of Statusengine - do not change
+config_type: 1
+
+# MySQL database host
+# Where Statusengine save Nagios and Naemon configuration objects
+mysql_host: 127.0.0.1
+
+# MySQL database user
+mysql_user: nagios
+
+# MySQL database password
+mysql_password: password
+
+# MySQL database name
+mysql_database: naemon
+
+# MySQL database table prefix
+# For example naemon for naemon_ prefix.
+mysql_table_prefix: naemon
+
+# IP address of your openITCOCKPIT V3 System
+# All commands will be executed via the openITCOCKPIT HTTP API
+oitc_host: 192.168.1.10
+
+# e-mail address for login
+oitc_user: admin@openitcockpit.io
+
+# Password of the given user
+oitc_password: password123
