@@ -51,21 +51,27 @@ class Parenthost {
      */
     private $parenthosts = [];
 
+    /**
+     * @var int
+     */
+    private $migrationContainerId;
 
     /**
      * Parenthost constructor.
      * @param $record
      * @param $parenthosts
+     * @param $migrationContainerId
      * @param Client $Client
      * @param Mapping $Mapping
      */
-    public function __construct ($record, $parenthosts, Client $Client, Mapping $Mapping) {
+    public function __construct ($record, $parenthosts, $migrationContainerId, Client $Client, Mapping $Mapping) {
         $this->host = $record;
         $this->parenthosts = $parenthosts;
         $this->objecttype_id = $record['objecttype_id'];
         $this->object_id = $record['object_id'];
         $this->client = $Client;
         $this->mapping = $Mapping;
+        $this->migrationContainerId = $migrationContainerId;
     }
 
     /**
@@ -100,7 +106,7 @@ class Parenthost {
             $data = [
                 'Host' => [
                     'id'              => $newHostId,
-                    'container_id'    => ROOT_CONTAINER,
+                    'container_id'    => $this->migrationContainerId,
                     'hosttemplate_id' => DEFAULT_HOSTTEMPLATE,
                     'name'            => $this->host['name1'],
                     'address'         => $this->host['address'],

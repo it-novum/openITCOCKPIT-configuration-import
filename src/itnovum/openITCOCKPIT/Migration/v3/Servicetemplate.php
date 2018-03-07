@@ -23,14 +23,25 @@ class Servicetemplate {
 
     private $client;
 
-    public function __construct (Client $Client,
-                                 $checkInterval,
-                                 $retryInterval,
-                                 $notificationInterval,
-                                 $activeChecksEnabled,
-                                 $processPerformanceData,
-                                 Command $v3Command,
-                                 $intervalLength) {
+    /**
+     * @var int
+     */
+    private $migrationContainerId;
+
+
+    /**
+     * Servicetemplate constructor.
+     * @param Client $Client
+     * @param $checkInterval
+     * @param $retryInterval
+     * @param $notificationInterval
+     * @param $activeChecksEnabled
+     * @param $processPerformanceData
+     * @param Command $v3Command
+     * @param $intervalLength
+     * @param $migrationContainerId
+     */
+    public function __construct (Client $Client, $checkInterval, $retryInterval, $notificationInterval, $activeChecksEnabled, $processPerformanceData, Command $v3Command, $intervalLength, $migrationContainerId) {
         $this->client = $Client;
         $this->checkInterval = $checkInterval;
         $this->retryInterval = $retryInterval;
@@ -39,6 +50,7 @@ class Servicetemplate {
         $this->processPerformanceData = $processPerformanceData;
         $this->v3Command = $v3Command;
         $this->intervallength = $intervalLength;
+        $this->migrationContainerId = $migrationContainerId;
     }
 
     public function createTemplate ($recursive = 0) {
@@ -59,7 +71,7 @@ class Servicetemplate {
             'Servicetemplate'                          => [
                 'template_name'              => strtoupper($this->v3Command->getName()),
                 'name'                       => $this->v3Command->getName(),
-                'container_id'               => ROOT_CONTAINER,
+                'container_id'               => $this->migrationContainerId,
                 'servicetemplatetype_id'     => 1,
                 'check_period_id'            => 1,
                 'notify_period_id'           => 1,

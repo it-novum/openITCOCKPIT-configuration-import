@@ -67,16 +67,22 @@ class Host {
     private $intervallength;
 
     /**
+     * @var int
+     */
+    private $migrationContainerId;
+
+    /**
      * Host constructor.
      * @param $record
      * @param $hostContacts
      * @param $hostContactgroups
      * @param $hostCustomVariables
+     * @param $migrationContainerId
      * @param Client $Client
      * @param Mapping $Mapping
      * @param $intervalLength
      */
-    public function __construct ($record, $hostContacts, $hostContactgroups, $hostCustomVariables, Client $Client, Mapping $Mapping, $intervalLength) {
+    public function __construct ($record, $hostContacts, $hostContactgroups, $hostCustomVariables, $migrationContainerId, Client $Client, Mapping $Mapping, $intervalLength) {
         $this->host = $record;
         $this->hostcontacts = $hostContacts;
         $this->hostcustomvariables = $hostCustomVariables;
@@ -86,6 +92,7 @@ class Host {
         $this->client = $Client;
         $this->mapping = $Mapping;
         $this->intervallength = $intervalLength;
+        $this->migrationContainerId = $migrationContainerId;
     }
 
     /**
@@ -133,7 +140,7 @@ class Host {
 
         $data = [
             'Host'           => [
-                'container_id'                  => ROOT_CONTAINER,
+                'container_id'                  => $this->migrationContainerId,
                 'hosttemplate_id'               => DEFAULT_HOSTTEMPLATE,
                 'name'                          => $this->host['name1'],
                 'description'                   => $this->host['alias'],

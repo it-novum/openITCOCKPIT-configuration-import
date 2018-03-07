@@ -35,6 +35,7 @@ class Macro {
      * Macro constructor.
      * @param $filename
      * @param Client $Client
+     * @param $Progressbar
      */
     public function __construct ($filename, Client $Client, $Progressbar) {
         $this->macro_filename = $filename;

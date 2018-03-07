@@ -36,3 +36,6 @@ oitc_user: admin@openitcockpit.io
 
 # Password of the given user
 oitc_password: password123
+
+# Define the tenant name for saving objects
+default_tenant_name: migration

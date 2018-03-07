@@ -47,19 +47,26 @@ class Contactgroup {
     private $contactgroupMembers;
 
     /**
-     * Contact constructor.
+     * @var int
+     */
+    private $migrationContainerId;
+
+    /**
+     * Contactgroup constructor.
      * @param $record
-     * @param $contactNotificationCommands
+     * @param $contactgroupMembers
+     * @param $migrationContainerId
      * @param Client $Client
      * @param Mapping $Mapping
      */
-    public function __construct ($record, $contactgroupMembers, Client $Client, Mapping $Mapping) {
+    public function __construct ($record, $contactgroupMembers, $migrationContainerId, Client $Client, Mapping $Mapping) {
         $this->contactgroupdata = $record;
         $this->object_id = $record['object_id'];
         $this->contactgroup_id = $record['contactgroup_id'];
         $this->client = $Client;
         $this->mapping = $Mapping;
         $this->contactgroupMembers = $contactgroupMembers;
+        $this->migrationContainerId = $migrationContainerId;
     }
 
 
@@ -91,7 +98,7 @@ class Contactgroup {
             }
             $data = [
                 'Container'    => [
-                    'parent_id'        => ROOT_CONTAINER,
+                    'parent_id'        => $this->migrationContainerId,
                     'name'             => $this->contactgroupdata['name1'],
                     'containertype_id' => 6, // Fixed value for CT_CONTACTGROUP.
                 ],

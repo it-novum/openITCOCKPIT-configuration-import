@@ -47,13 +47,19 @@ class Servicegroup {
     private $client;
 
     /**
+     * @var int
+     */
+    private $migrationContainerId;
+
+    /**
      * Servicegroup constructor.
      * @param $record
      * @param Client $Client
-     * @param $hostgroupMembers
+     * @param $servicegroupMembers
      * @param Mapping $mapping
+     * @param $migrationContainerId
      */
-    public function __construct ($record, Client $Client, $servicegroupMembers, Mapping $mapping) {
+    public function __construct ($record, Client $Client, $servicegroupMembers, Mapping $mapping, $migrationContainerId) {
         $this->servicegroup = $record;
         $this->name = $record['name1'];
         $this->objecttype_id = $record['objecttype_id'];
@@ -61,6 +67,7 @@ class Servicegroup {
         $this->client = $Client;
         $this->servicegroupMembers = $servicegroupMembers;
         $this->mapping = $mapping;
+        $this->migrationContainerId = $migrationContainerId;
     }
 
     /**
@@ -96,7 +103,7 @@ class Servicegroup {
 
         $data = [
             'Container'    => [
-                'parent_id' => ROOT_CONTAINER,
+                'parent_id' => $this->migrationContainerId,
                 'name'      => $this->servicegroup['name1'],
             ],
             'Servicegroup' => [

@@ -72,8 +72,10 @@ class TimePeriod {
     private $client;
 
     /**
-     * Command constructor.
-     * @param array $record
+     * TimePeriod constructor.
+     * @param $record
+     * @param $timeranges
+     * @param Client $Client
      */
     public function __construct ($record, $timeranges, Client $Client) {
         $this->name = $record['name1'];
@@ -237,7 +239,7 @@ class TimePeriod {
         $enc_response = json_decode($response->getBody()->getContents(), true);
         if (isset($enc_response['error']['name']) && in_array('This timeperiod name has already been taken.', $enc_response['error']['name'])
         ) {
-            $message = 'Timeperiod name "' . $data['Timeperiod']['name'] . '" was already taken, I\'ll prefix it with "migration_" and try again.' . PHP_EOL;
+            $message .= 'Timeperiod name "' . $data['Timeperiod']['name'] . '" was already taken, I\'ll prefix it with "migration_" and try again.' . PHP_EOL;
             $data['Timeperiod']['name'] = 'migration_' . $data['Timeperiod']['name'];
             return $this->save($data, $message);
         }

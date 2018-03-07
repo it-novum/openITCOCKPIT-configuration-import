@@ -47,17 +47,24 @@ class Contact {
     private $contactNotificationCommands;
 
     /**
+     * @var int
+     */
+    private $migrationContainerId;
+
+    /**
      * Contact constructor.
      * @param $record
      * @param $contactNotificationCommands
+     * @param $migrationContainerId
      * @param Client $Client
      * @param Mapping $Mapping
      */
-    public function __construct ($record, $contactNotificationCommands, Client $Client, Mapping $Mapping) {
+    public function __construct ($record, $contactNotificationCommands, $migrationContainerId, Client $Client, Mapping $Mapping) {
         $this->contactdata = $record;
         $this->object_id = $record['object_id'];
         $this->client = $Client;
         $this->mapping = $Mapping;
+        $this->migrationContainerId = $migrationContainerId;
         $this->contactNotificationCommands = $contactNotificationCommands;
     }
 
@@ -137,7 +144,7 @@ class Contact {
                 ],
                 'Container' => [
                     'Container' => [
-                        ROOT_CONTAINER
+                        $this->migrationContainerId
                     ],
                 ],
             ];
@@ -154,16 +161,16 @@ class Contact {
         }
         $enc_response = json_decode($response->getBody()->getContents(), true);
         if ($exception || (isset($enc_response['error']['name']) && in_array('This contact name has already been taken.', $enc_response['error']['name']))) {
-            $message = 'Contact name "' . $data['Contact']['name'] . '" was already taken, I\'ll prefix it with "migration_" and try again.' . PHP_EOL;
+            $message .= 'Contact name "' . $data['Contact']['name'] . '" was already taken, I\'ll prefix it with "migration_" and try again.' . PHP_EOL;
             $data['Contact']['name'] = 'migration_' . $data['Contact']['name'];
             return $this->save($data, $message);
         }
         if (isset($enc_response['error']['email']) && in_array('Invalid email address', $enc_response['error']['email']) && $recursive < 2) {
             if ($recursive == 0) {
-                $message = 'Contact email "' . $data['Contact']['email'] . '" is invalid, I\'ll postfix it with ".com" and try again.' . PHP_EOL;
+                $message .= 'Contact email "' . $data['Contact']['email'] . '" is invalid, I\'ll postfix it with ".com" and try again.' . PHP_EOL;
                 $data['Contact']['email'] = $data['Contact']['email'] . '.com';
             } else {
-                $message = 'Contact email "' . $data['Contact']['email'] . '" is invalid, I\'ll replace it with default "info@example.org" and try again.' . PHP_EOL;
+                $message .= 'Contact email "' . $data['Contact']['email'] . '" is invalid, I\'ll replace it with default "info@example.org" and try again.' . PHP_EOL;
                 $data['Contact']['email'] = 'info@example.org';
             }
 

@@ -52,7 +52,8 @@ class Command {
 
     /**
      * Command constructor.
-     * @param array $record
+     * @param $record
+     * @param Client $Client
      */
     public function __construct ($record, Client $Client) {
         $this->name = $record['name1'];
@@ -150,7 +151,7 @@ class Command {
         $enc_response = json_decode($response->getBody()->getContents(), true);
         if ($exception || (isset($enc_response['error']['name']) && in_array('This command name has already been taken.', $enc_response['error']['name']))
         ) {
-            $message = 'Command name "' . $data['Command']['name'] . '" was already taken, I\'ll prefix it with "migration_" and try again.' . PHP_EOL;
+            $message .= 'Command name "' . $data['Command']['name'] . '" was already taken, I\'ll prefix it with "migration_" and try again.' . PHP_EOL;
             $data['Command']['name'] = 'migration_' . $data['Command']['name'];
             return $this->save($data, $message);
         }

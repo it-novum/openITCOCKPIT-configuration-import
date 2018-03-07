@@ -47,13 +47,19 @@ class Hostgroup {
     private $client;
 
     /**
+     * @var int
+     */
+    private $migrationContainerId;
+
+    /**
      * Hostgroup constructor.
      * @param $record
      * @param Client $Client
      * @param $hostgroupMembers
      * @param Mapping $mapping
+     * @param $migrationContainerId
      */
-    public function __construct ($record, Client $Client, $hostgroupMembers, Mapping $mapping) {
+    public function __construct ($record, Client $Client, $hostgroupMembers, Mapping $mapping, $migrationContainerId) {
         $this->hostgroup = $record;
         $this->name = $record['name1'];
         $this->objecttype_id = $record['objecttype_id'];
@@ -61,6 +67,7 @@ class Hostgroup {
         $this->client = $Client;
         $this->hostgroupMembers = $hostgroupMembers;
         $this->mapping = $mapping;
+        $this->migrationContainerId = $migrationContainerId;
     }
 
     /**
@@ -108,7 +115,7 @@ class Hostgroup {
 
             $data = [
                 'Container' => [
-                    'parent_id' => ROOT_CONTAINER,
+                    'parent_id' => $this->migrationContainerId,
                     'name'      => $this->hostgroup['name1'],
                 ],
                 'Hostgroup' => [

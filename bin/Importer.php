@@ -19,6 +19,7 @@ use itnovum\openITCOCKPIT\Migration\Config;
 use itnovum\openITCOCKPIT\Migration\Database;
 use itnovum\openITCOCKPIT\Migration\Mapping;
 use itnovum\openITCOCKPIT\Migration\Cli;
+use itnovum\openITCOCKPIT\Migration\Objects\Tenant;
 use itnovum\openITCOCKPIT\Migration\Objects\Command;
 use itnovum\openITCOCKPIT\Migration\Objects\TimePeriod;
 use itnovum\openITCOCKPIT\Migration\Objects\Contact;
@@ -41,7 +42,6 @@ $Database->connect();
 $Mapping = new Mapping();
 
 $client = new \GuzzleHttp\Client([
-    'timeout'         => 2.0,
     'base_uri'        => 'https://' . $Config->getKey('oitc_host'),
     'headers'         => [
         'Content-Type' => 'application/json'
@@ -74,6 +74,17 @@ if (json_decode($loginresponse->getBody()->getContents(), true)['message'] === '
     echo PHP_EOL;
     exit(1);
 }
+
+
+$Tenant = new Tenant($Config->getKey('default_tenant_name'), $client);
+$tenantreturn = $Tenant->save();
+if ($tenantreturn['message']) {
+    echo $tenantreturn['message'];
+    echo PHP_EOL;
+}
+echo 'Tenant "' . $Config->getKey('default_tenant_name') . '" successfully created';
+echo PHP_EOL . PHP_EOL;
+$migrationContainerId = $tenantreturn['container_id'];
 
 
 if (!empty(file($Config->getKey('resource_cfg')))) {
@@ -119,7 +130,7 @@ $Progressbar = new ProgressBar\Manager(0, sizeof($contacts));
 $contactOutput = [];
 
 foreach ($contacts as $i => $contact) {
-    $Contact = new Contact($contact, $Database->getContactNotificationCommands($contact['contact_id']), $client, $Mapping);
+    $Contact = new Contact($contact, $Database->getContactNotificationCommands($contact['contact_id']), $migrationContainerId, $client, $Mapping);
     $return = $Contact->save();
     $contactOutput[] = $return['message'];
     $Mapping->addContact($Contact->getObjectId(), $return['id']);
@@ -133,7 +144,7 @@ $contactgroups = $Database->getContactgroups();
 $Progressbar = new ProgressBar\Manager(0, sizeof($contactgroups));
 
 foreach ($contactgroups as $i => $contactgroup) {
-    $Contactgroup = new Contactgroup($contactgroup, $Database->getContactgroupMembers($contactgroup['contactgroup_id']), $client, $Mapping);
+    $Contactgroup = new Contactgroup($contactgroup, $Database->getContactgroupMembers($contactgroup['contactgroup_id']), $migrationContainerId, $client, $Mapping);
     $Mapping->addContactgroup($Contactgroup->getObjectId(), $Contactgroup->save());
     $Progressbar->update($i + 1);
 }
@@ -149,6 +160,7 @@ foreach ($hosts as $i => $host) {
         $Database->getHostContacts($host['host_id']),
         $Database->getHostContactgroups($host['host_id']),
         $Database->getCustomVariables($host['host_id']),
+        $migrationContainerId,
         $client,
         $Mapping,
         $Config->getKey('interval_length')
@@ -166,6 +178,7 @@ foreach ($hosts as $i => $host) {
     $Parenthost = new Parenthost(
         $host,
         $Database->getParenthosts($host['host_id']),
+        $migrationContainerId,
         $client,
         $Mapping
     );
@@ -206,7 +219,8 @@ foreach ($commands as $i => $command) {
         $activeChecksEnabled,
         $processPerformanceData,
         $v3Command,
-        $Config->getKey('interval_length')
+        $Config->getKey('interval_length'),
+        $migrationContainerId
     );
 
     $Mapping->addServicetemplate($Command->getObjectId(), $Servicetemplate->createTemplate());
@@ -248,7 +262,7 @@ $hostgroups = $Database->getHostgroups();
 $Progressbar = new ProgressBar\Manager(0, sizeof($hostgroups));
 
 foreach ($hostgroups as $i => $hostgroup) {
-    $Hostgroup = new Hostgroup($hostgroup, $client, $Database->getHostgroupMembers($hostgroup['hostgroup_object_id']), $Mapping);
+    $Hostgroup = new Hostgroup($hostgroup, $client, $Database->getHostgroupMembers($hostgroup['hostgroup_object_id']), $Mapping, $migrationContainerId);
     $Mapping->addHostgroup($Hostgroup->getObjectId(), $Hostgroup->save());
     $Progressbar->update($i + 1);
 }
@@ -259,7 +273,7 @@ $servicegroups = $Database->getServicegroups();
 $Progressbar = new ProgressBar\Manager(0, sizeof($servicegroups));
 
 foreach ($servicegroups as $i => $servicegroup) {
-    $Servicegroup = new Servicegroup($servicegroup, $client, $Database->getServicegroupMembers($servicegroup['servicegroup_object_id']), $Mapping);
+    $Servicegroup = new Servicegroup($servicegroup, $client, $Database->getServicegroupMembers($servicegroup['servicegroup_object_id']), $Mapping, $migrationContainerId);
     $Mapping->addServicegroup($Servicegroup->getObjectId(), $Servicegroup->save());
     $Progressbar->update($i + 1);
 }
