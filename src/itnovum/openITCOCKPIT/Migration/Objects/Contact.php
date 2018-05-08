@@ -165,6 +165,12 @@ class Contact {
             $data['Contact']['name'] = 'migration_' . $data['Contact']['name'];
             return $this->save($data, $message);
         }
+        if (isset($enc_response['error']['notify_host_recovery']) && in_array('You have to choose at least one option.', $enc_response['error']['notify_host_recovery'])) {
+            $message .= 'Set contact options "notify_host_recovery" and "notify_service_recovery" for "'.$this->contactdata['name1'].'" to 1' . PHP_EOL;
+            $data['Contact']['notify_host_recovery'] = 1;
+            $data['Contact']['notify_service_recovery'] = 1;
+            return $this->save($data, $message);
+        }
         if (isset($enc_response['error']['email']) && in_array('Invalid email address', $enc_response['error']['email']) && $recursive < 2) {
             if ($recursive == 0) {
                 $message .= 'Contact email "' . $data['Contact']['email'] . '" is invalid, I\'ll postfix it with ".com" and try again.' . PHP_EOL;
