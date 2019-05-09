@@ -151,6 +151,10 @@ class Service {
 
         }
 
+        if(empty($contactIds)) {
+            $contactIds = "";
+        }
+
         $data = [
             'Serviceeventcommandargumentvalue' => [],
             'Servicecommandargumentvalue'      => $checkCommandArgs,
